@@ -1,0 +1,26 @@
+{
+  "name": "merge-pdf",
+  "version": "1.0.0",
+  "description": "A Node.js microservice for merging PDF files",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.9.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.4.0",
+    "pdf-lib": "^1.17.1"
+  }
+}

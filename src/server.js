@@ -9,6 +9,10 @@ const PORT = process.env.PORT || 3232;
 
 const upload = multer({
   dest: "tmp/",
+  limits: {
+    files: 20,
+    fileSize: 25 * 1024 * 1024,
+  },
 });
 
 app.get("/health", (req, res) => {
@@ -17,7 +21,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.post("/merge", upload.array("files"), async (req, res) => {
+app.post("/merge", handleUpload, async (req, res) => {
   if (!req.files || req.files.length < 2) {
     return res.status(400).json({
       error: "Please upload atleast 2 pdf files",
@@ -64,3 +68,35 @@ app.post("/merge", upload.array("files"), async (req, res) => {
 app.listen(PORT, () => {
   console.log(`PDF Merge service is running on port ${PORT}`);
 });
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ */
+function handleUpload(req, res, next) {
+  upload.array("files")(req, res, (err) => {
+    if (!err) {
+      next();
+    }
+
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({
+          error: "File is too large. Maximum file size is 25MB",
+        });
+      }
+
+      if (err.code === "LIMIT_FILE_COUNT") {
+        return res.status(413).json({
+          error: "Too many files. Maximum number of files is 20",
+        });
+      }
+    }
+    console.error("Upload error:", err);
+
+    return res.status(500).json({
+      error: "Failed to upload files",
+    });
+  });
+}

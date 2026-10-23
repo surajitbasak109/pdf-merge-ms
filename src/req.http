@@ -1,0 +1,17 @@
+GET http://localhost:3232/health HTTP/1.1
+
+### Merge PDF files
+POST http://localhost:3232/merge
+Content-Type: multipart/form-data; boundary=----PDFMergeBoundary
+
+------PDFMergeBoundary
+Content-Disposition: form-data; name="files"; filename="document1.pdf"
+Content-Type: application/pdf
+
+< ./tmp/1.pdf
+------PDFMergeBoundary
+Content-Disposition: form-data; name="files"; filename="document2.pdf"
+Content-Type: application/pdf
+
+< ./tmp/2.pdf
+------PDFMergeBoundary--
